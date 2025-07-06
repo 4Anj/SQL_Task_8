@@ -1,0 +1,61 @@
+use shopDM;
+
+-- Create table
+CREATE TABLE Employees (
+    EmpID INT PRIMARY KEY,
+    EmpName VARCHAR(100),
+    Department VARCHAR(50),
+    Salary DECIMAL(10,2),
+    ExperienceYears INT
+);
+
+-- Insert sample data
+INSERT INTO Employees (EmpID, EmpName, Department, Salary, ExperienceYears) VALUES
+(101, 'Anjana', 'IT', 80000, 2),
+(102, 'Ravi', 'HR', 60000, 5),
+(103, 'Meera', 'Finance', 120000, 10),
+(104, 'John', 'IT', 90000, 7),
+(105, 'Priya', 'Marketing', 55000, 1);
+
+
+DELIMITER $$
+
+CREATE PROCEDURE GetEmployeesAboveSalary(IN minSalary DECIMAL(10,2))
+BEGIN
+    SELECT * FROM Employees
+    WHERE Salary > minSalary;
+END $$
+
+DELIMITER ;
+
+CALL GetEmployeesAboveSalary(70000);
+
+
+DELIMITER $$
+
+CREATE FUNCTION GetExperienceLevel(exp INT)
+RETURNS VARCHAR(20)
+DETERMINISTIC
+BEGIN
+    DECLARE level VARCHAR(20);
+
+    IF exp >= 8 THEN
+        SET level = 'Senior';
+    ELSEIF exp >= 3 THEN
+        SET level = 'Mid-Level';
+    ELSE
+        SET level = 'Junior';
+    END IF;
+
+    RETURN level;
+END $$
+
+DELIMITER ;
+
+
+SELECT 
+    EmpID, 
+    EmpName, 
+    ExperienceYears,
+    GetExperienceLevel(ExperienceYears) AS ExperienceLevel
+FROM Employees;
